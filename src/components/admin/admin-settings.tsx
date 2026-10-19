@@ -332,7 +332,7 @@ export function AdminSettings() {
               </button>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              در صورت خالی گذاشتن، رمز قبلی حفظ می‌شود. رمز فعلی پیش‌فرض: <code className="font-mono">{toFaDigits("admin123")}</code>
+              در صورت خالی گذاشتن، رمز قبلی حفظ می‌شود. رمز فعلی پیش‌فرض: <code className="font-mono">admin123</code>
             </p>
           </div>
           <Separator className="my-2" />

@@ -135,7 +135,7 @@ export function AdminLogin() {
               </Button>
 
               <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-3 text-center text-xs text-muted-foreground">
-                رمز پیش‌فرض: <span className="font-mono font-semibold text-foreground">{toFaDigits("admin123")}</span>
+                رمز پیش‌فرض: <span className="font-mono font-semibold text-foreground">admin123</span>
               </div>
 
               <Button

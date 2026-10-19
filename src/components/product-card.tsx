@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { StarRating } from "@/components/star-rating";
 import { useNav } from "@/lib/store";
 import { useCart } from "@/lib/cart";
-import { formatPrice, toFaDigits, colorToHex } from "@/lib/utils";
+import { formatPrice, toFaDigits, colorToHex, cn } from "@/lib/utils";
 import type { Product } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -21,6 +21,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const [liked, setLiked] = React.useState(false);
 
   const img = product.images[0] || "/products/placeholder.png";
+  const hoverImg = product.images[1];
 
   function quickAdd(e: React.MouseEvent) {
     e.stopPropagation();
@@ -61,8 +62,20 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             alt={product.name}
             fill
             sizes="(max-width:768px) 50vw, (max-width:1200px) 33vw, 25vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className={cn(
+              "object-cover transition-all duration-700 group-hover:scale-105",
+              hoverImg && "group-hover:opacity-0"
+            )}
           />
+          {hoverImg && (
+            <Image
+              src={hoverImg}
+              alt={product.name}
+              fill
+              sizes="(max-width:768px) 50vw, (max-width:1200px) 33vw, 25vw"
+              className="object-cover absolute inset-0 opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+            />
+          )}
           {/* Badges */}
           <div className="absolute top-3 right-3 flex flex-col gap-1.5">
             {product.discountPercent > 0 && (

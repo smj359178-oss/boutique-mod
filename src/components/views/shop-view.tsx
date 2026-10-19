@@ -36,7 +36,7 @@ export function ShopView({ initialCategory, initialSearch }: { initialCategory?:
   const [search, setSearch] = React.useState(initialSearch || "");
   const [size, setSize] = React.useState<string>("");
   const [color, setColor] = React.useState<string>("");
-  const [priceRange, setPriceRange] = React.useState<number[]>([0, 6000000]);
+  const [priceRange, setPriceRange] = React.useState<number[]>([0, 8000000]);
   const [sort, setSort] = React.useState("newest");
   const [mobileFilters, setMobileFilters] = React.useState(false);
 
@@ -106,7 +106,7 @@ export function ShopView({ initialCategory, initialSearch }: { initialCategory?:
           value={priceRange}
           onValueChange={setPriceRange}
           min={0}
-          max={6000000}
+          max={8000000}
           step={100000}
           className="my-4"
         />

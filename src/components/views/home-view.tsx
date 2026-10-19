@@ -54,7 +54,7 @@ export function HomeView() {
                 className="inline-flex items-center gap-2 rounded-full border bg-card/70 backdrop-blur px-4 py-1.5 text-xs font-medium mb-5"
               >
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                کالکشن جدید پاییز ۱۴۰۵ رسید
+                کالکشن جدید پاییز و زمستان رسید
               </motion.div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
                 <span className="text-gradient">{settings?.heroTitle || "استایل تو، امضای تو"}</span>
@@ -151,7 +151,7 @@ export function HomeView() {
                 "✦ ارسال رایگان بالای ۵۰۰ هزار تومان",
                 "✦ ۷ روز ضمانت بازگشت کالا",
                 "✦ پرداخت در محل",
-                "✦ جدیدترین کالکشن پاییز ۱۴۰۵",
+                "✦ جدیدترین کالکشن پاییز و زمستان",
                 "✦ سفارش آسان از واتساپ",
                 "✦ پشتیبانی ۲۴ ساعته",
               ].map((t, i) => (

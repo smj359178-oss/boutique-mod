@@ -16,6 +16,7 @@ import {
   Minus,
   Plus,
   ChevronLeft,
+  ChevronRight,
   Star,
   Tag,
 } from "lucide-react";
@@ -45,11 +46,14 @@ export function ProductView({ slug }: { slug: string }) {
   const [qty, setQty] = React.useState(1);
   const [liked, setLiked] = React.useState(false);
 
+  const [selectedImgIndex, setSelectedImgIndex] = React.useState(0);
+
   React.useEffect(() => {
     if (product) {
       setSelectedColor(product.colors[0] || "");
       setSelectedSize(product.sizes[0] || "");
       setQty(1);
+      setSelectedImgIndex(0);
     }
   }, [product?.id]);
 
@@ -61,7 +65,8 @@ export function ProductView({ slug }: { slug: string }) {
     );
   }
 
-  const img = product.images[0] || "/products/placeholder.png";
+  const images = product.images && product.images.length > 0 ? product.images : ["/products/placeholder.png"];
+  const activeImage = images[selectedImgIndex] || images[0];
   const related = (data?.products || [])
     .filter((p) => p.category?.slug === product.category?.slug && p.id !== product.id)
     .slice(0, 4);
@@ -81,7 +86,7 @@ export function ProductView({ slug }: { slug: string }) {
         slug: product!.slug,
         name: product!.name,
         price: product!.finalPrice,
-        image: img,
+        image: activeImage,
         color: selectedColor,
         size: selectedSize,
       },
@@ -118,7 +123,7 @@ export function ProductView({ slug }: { slug: string }) {
             qty,
             color: selectedColor,
             size: selectedSize,
-            image: img,
+            image: activeImage,
           },
         ],
       }),
@@ -156,42 +161,85 @@ export function ProductView({ slug }: { slug: string }) {
           transition={{ duration: 0.5 }}
           className="lg:sticky lg:top-24 lg:self-start"
         >
-          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border bg-muted shadow-soft">
-            <Image
-              src={img}
-              alt={product.name}
-              fill
-              priority
-              sizes="(max-width:1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-            <div className="absolute top-4 right-4 flex flex-col gap-2">
+          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border bg-muted shadow-soft group">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeImage}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="relative h-full w-full"
+              >
+                <Image
+                  src={activeImage}
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width:1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Badges */}
+            <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 pointer-events-none">
               {product.discountPercent > 0 && (
-                <Badge className="bg-primary text-primary-foreground shadow rounded-full px-3 py-1">
+                <Badge className="bg-primary text-primary-foreground shadow rounded-full px-3 py-1 font-bold">
                   {toFaDigits(product.discountPercent)}٪ تخفیف
                 </Badge>
               )}
               {product.featured && (
-                <Badge className="bg-accent text-accent-foreground shadow rounded-full px-3 py-1">
+                <Badge className="bg-accent text-accent-foreground shadow rounded-full px-3 py-1 font-medium">
                   ویژه
                 </Badge>
               )}
             </div>
+
+            {/* Gallery Next / Prev navigation if multiple images */}
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setSelectedImgIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-10 grid place-items-center h-10 w-10 rounded-full bg-background/80 backdrop-blur-md shadow-md text-foreground opacity-80 hover:opacity-100 hover:scale-105 transition"
+                  aria-label="تصویر قبلی"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedImgIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 grid place-items-center h-10 w-10 rounded-full bg-background/80 backdrop-blur-md shadow-md text-foreground opacity-80 hover:opacity-100 hover:scale-105 transition"
+                  aria-label="تصویر بعدی"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
           </div>
-          {/* Thumbnails (same image repeated for demo) */}
-          <div className="flex gap-2 mt-3">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className={cn(
-                  "relative h-20 w-16 rounded-xl overflow-hidden border-2 bg-muted cursor-pointer transition",
-                  i === 0 ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
-                )}
-              >
-                <Image src={img} alt="" fill className="object-cover" sizes="64px" />
-              </div>
-            ))}
-          </div>
+
+          {/* Interactive Thumbnails */}
+          {images.length > 1 && (
+            <div className="flex gap-2.5 mt-3.5 overflow-x-auto pb-1">
+              {images.map((imgSrc, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setSelectedImgIndex(i)}
+                  className={cn(
+                    "relative h-20 w-16 shrink-0 rounded-xl overflow-hidden border-2 bg-muted cursor-pointer transition-all duration-200",
+                    selectedImgIndex === i
+                      ? "border-primary ring-2 ring-primary/30 scale-105 shadow-sm"
+                      : "border-transparent opacity-60 hover:opacity-100 hover:scale-100"
+                  )}
+                  aria-label={`نمایش تصویر ${i + 1}`}
+                >
+                  <Image src={imgSrc} alt="" fill className="object-cover" sizes="64px" />
+                </button>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Info */}
